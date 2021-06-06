@@ -145,7 +145,17 @@
 
     // 建立socket连接，等待服务器“推送”数据，用回调函数更新图表
     $(document).ready(function () {
+        //开始监控
         $("#btn1").click(function () {
+            var namespace = '/test';
+            const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+            socket.on('server_response', function (res) {
+                update_mychart(res);
+            });
+        })
+        //停止监控
+        $("#btn2").click(function () {
             var namespace = '/test';
             const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
