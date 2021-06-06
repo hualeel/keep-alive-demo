@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket Demo</title>
+<!--    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.6.0/jquery.min.js"></script>-->
+<!--    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/4.0.1/socket.io.min.js"></script>-->
+
+    <script type="text/javascript" src="/static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="/static/socket.io-4.0.1.js"></script>
+    <!-- ECharts 3 引入 -->
+<!--    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>-->
+    <script type="text/javascript" src="/static/echarts.min-4.3.0.js"></script>
+</head>
+<body>
+
+<h2>HTTP长连接 Demo </h2>
+<button id="btn1">开始监控</button>
+<button id="btn2">停止监控</button>
+<div id="t"></div>
+<div id="main" style="height:500px;border:1px solid #ccc;padding:10px;"></div>
+<script type="text/javascript">
+    const myChart = echarts.init(document.getElementById('main'), "wonderland");
+    myChart.setOption({
+        title: {
+            text: 'CPU监控走势图'
+        },
+        tooltip: {},
+        legend: {
+            data: ['cpu1', 'cpu2', 'cpu3', 'cpu4', 'cpu5', 'cpu6', 'cpu7', 'cpu8']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
+        series: [{
+            name: 'cpu1',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu2',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu3',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu4',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu5',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu6',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu7',
+            type: 'line',
+            data: []
+        }, {
+            name: 'cpu8',
+            type: 'line',
+            data: []
+        }]
+    });
+
+
+    var time = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+        cpu1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu4 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu5 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu6 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu7 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cpu8 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+
+    //准备好统一的 callback 函数
+    const update_mychart = function (res) {
+        //res是json格式的response对象
+
+        // 隐藏加载动画
+        myChart.hideLoading();
+
+
+        // 准备数据
+        time.push(res.data[0]);
+        cpu1.push(parseFloat(res.data[1]));
+        cpu2.push(parseFloat(res.data[2]));
+        cpu3.push(parseFloat(res.data[3]));
+        cpu4.push(parseFloat(res.data[4]));
+        cpu5.push(parseFloat(res.data[5]));
+        cpu6.push(parseFloat(res.data[6]));
+        cpu7.push(parseFloat(res.data[7]));
+        cpu8.push(parseFloat(res.data[8]));
+        if (time.length >= 10) {
+            time.shift();
+            cpu1.shift();
+            cpu2.shift();
+            cpu3.shift();
+            cpu4.shift();
+            cpu5.shift();
+            cpu6.shift();
+            cpu7.shift();
+            cpu8.shift();
+        }
+
+        // 填入数据
+        myChart.setOption({
+            xAxis: {
+                data: time
+            },
+            series: [{
+                name: 'cpu1', // 根据名字对应到相应的系列
+                data: cpu1
+            }, {
+                name: 'cpu2', // 根据名字对应到相应的系列
+                data: cpu2
+            }, {
+                name: 'cpu3', // 根据名字对应到相应的系列
+                data: cpu3
+            }, {
+                name: 'cpu4', // 根据名字对应到相应的系列
+                data: cpu4
+            }, {
+                name: 'cpu5', // 根据名字对应到相应的系列
+                data: cpu5
+            }, {
+                name: 'cpu6', // 根据名字对应到相应的系列
+                data: cpu6
+            }, {
+                name: 'cpu7', // 根据名字对应到相应的系列
+                data: cpu7
+            }, {
+                name: 'cpu8', // 根据名字对应到相应的系列
+                data: cpu8
+            }]
+        });
+    };
+
+    // 建立socket连接，等待服务器“推送”数据，用回调函数更新图表
+    $(document).ready(function () {
+        $("#btn1").click(function () {
+            var namespace = '/test';
+            const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+            socket.on('server_response', function (res) {
+                update_mychart(res);
+            });
+        })
+
+    });
+
+</script>
+</body>
+</html>
