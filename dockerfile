@@ -10,8 +10,6 @@ RUN python -m pip install --upgrade pip
 COPY . /$SERVICE_DIR
 WORKDIR /$SERVICE_DIR
 
-
-
 RUN pip install -r requirements.txt
 
 EXPOSE $SERVICE_PORT
