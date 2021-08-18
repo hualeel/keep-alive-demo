@@ -7,7 +7,6 @@ SERVICE_DIR=app \
 PYPI=https://mirrors.aliyun.com/pypi/simple/
 RUN python -m pip install --upgrade pip
 
-
 COPY . /$SERVICE_DIR
 WORKDIR /$SERVICE_DIR
 
