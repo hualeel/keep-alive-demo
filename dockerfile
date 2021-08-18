@@ -4,6 +4,8 @@ MAINTAINER lihua
 
 
 
+
+
 # 环境变量
 ENV SERVICE_PORT=6008 \
 SERVICE_DIR=app \
